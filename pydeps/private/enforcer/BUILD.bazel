@@ -2,8 +2,6 @@ load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
 load("@python_versions//3.12:defs.bzl", "py_binary")
 load("@rules_pydeps_pip//:requirements.bzl", "requirement")
 
-exports_files(glob(include = ["templates/*.template"]))
-
 py_binary(
     name = "deps_cli",
     srcs = glob(
