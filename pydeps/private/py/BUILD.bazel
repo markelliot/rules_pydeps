@@ -1,0 +1,42 @@
+load("@rules_pydeps_pip//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_library")
+load("//pydeps/private/pytest:pytest.bzl", "pytest_test")
+
+py_library(
+    name = "py",
+    srcs = glob(
+        include = ["*.py"],
+        exclude = ["test_*.py"],
+    ),
+    visibility = [
+        "//pydeps/private:__subpackages__",
+    ],
+    deps = [requirement("libcst")],
+)
+
+pytest_test(
+    name = "test_python_module",
+    srcs = ["test_python_module.py"],
+    deps = [
+        ":py",
+        requirement("pytest"),
+    ],
+)
+
+pytest_test(
+    name = "test_python_source",
+    srcs = ["test_python_source.py"],
+    deps = [
+        ":py",
+        requirement("pytest"),
+    ],
+)
+
+pytest_test(
+    name = "test_source_files",
+    srcs = ["test_source_files.py"],
+    deps = [
+        ":py",
+        requirement("pytest"),
+    ],
+)

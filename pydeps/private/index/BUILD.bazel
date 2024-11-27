@@ -1,0 +1,32 @@
+load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+load("@python_versions//3.12:defs.bzl", "py_binary")
+load("@rules_pydeps_pip//:requirements.bzl", "requirement")
+
+exports_files(glob(include = ["templates/*.template"]))
+
+py_binary(
+    name = "index",
+    srcs = glob(
+        include = ["*.py"],
+        exclude = ["test_*.py"],
+    ),
+    visibility = [
+        "//pydeps/private:__subpackages__",
+    ],
+    deps = [
+        "//pydeps/private/py",
+        requirement("click"),
+    ],
+)
+
+bzl_library(
+    name = "deps_index",
+    srcs = ["deps_index.bzl"],
+    visibility = ["//pydeps:__subpackages__"],
+)
+
+bzl_library(
+    name = "reqs",
+    srcs = ["reqs.bzl"],
+    visibility = ["//pydeps:__subpackages__"],
+)

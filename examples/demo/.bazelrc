@@ -1,0 +1,9 @@
+common --enable_bzlmod
+
+common --lockfile_mode=off
+
+test --test_output=errors
+
+# add pydeps enforcement aspect and enable it by default
+build --aspects //:aspects.bzl%deps_enforcer
+build --output_groups=+pydeps

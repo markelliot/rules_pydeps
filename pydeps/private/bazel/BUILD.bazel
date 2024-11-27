@@ -1,0 +1,19 @@
+load("@rules_pydeps_pip//:requirements.bzl", "requirement")
+load("@rules_python//python:py_library.bzl", "py_library")
+
+exports_files(glob(include = ["templates/*.template"]))
+
+py_library(
+    name = "bazel",
+    srcs = glob(
+        include = ["*.py"],
+        exclude = ["test_*.py"],
+    ),
+    visibility = [
+        "//pydeps/private:__subpackages__",
+    ],
+    deps = [
+        "//pydeps/private/py",
+        requirement("click"),
+    ],
+)

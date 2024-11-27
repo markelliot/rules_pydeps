@@ -1,0 +1,48 @@
+name: Update requirements lockfiles
+on:
+  pull_request:
+    paths:
+      - "pydeps/private/requirements.in"
+      - "examples/demo/requirements.in"
+jobs:
+  update-requirements:
+    name: Update requirements lockfiles
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Get Token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.THM_AUTOMATION_APP_ID }}
+          private-key: ${{ secrets.THM_AUTOMATION_PRIVATE_KEY }}
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Update requirements lockfiles
+        run: bazel run //pydeps/private:generate_requirements_lock
+      - name: Update requirements lockfiles (examples/demo)
+        working-directory: examples/demo
+        run: bazel run //:generate_requirements_lock
+      - name: Commit
+        run: |
+          if [[ -n "$( git diff \
+              "pydeps/private/requirements.in" \
+              "pydeps/private/requirements.txt" \
+              "examples/demo/requirements.in" \
+              "examples/demo/requirements.txt" \
+              )" ]]
+          then
+            git config --local user.name 'Theorem Automation'
+            git config --local user.email 'thm-automation[bot]@users.noreply.github.com'
+            git checkout -b thm-automation/tmp
+            git add "pydeps/private/requirements.in"
+            git add "pydeps/private/requirements.txt"
+            git add "examples/demo/requirements.in"
+            git add "examples/demo/requirements.txt"
+            git commit -m "Update requirements lockfiles"
+            git push origin "HEAD:$GITHUB_HEAD_REF"
+          fi
