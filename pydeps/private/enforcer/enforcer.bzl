@@ -91,6 +91,9 @@ def _deps_aspect_impl(target, ctx):
     dependency_files = []
 
     for dep in ctx.rule.attr.deps:
+        if dep.label.name in ctx.attr._ignored_names:
+            continue
+
         if PyInfo in dep:
             dep_str = str(dep.label)
             referenced_deps.append(dep_str)
@@ -143,9 +146,11 @@ def _deps_aspect_impl(target, ctx):
 
     return [OutputGroupInfo(**output_group_info_dict)]
 
-def deps_enforcer_aspect_factory(pip_deps_index, suppression_tags = None, output_groups = None):
-    suppression_tags = suppression_tags or ["no-deps-enforcer"]
-
+def deps_enforcer_aspect_factory(
+        pip_deps_index,
+        suppression_tags = None,
+        output_groups = None,
+        ignored_target_names = None):
     return aspect(
         implementation = _deps_aspect_impl,
         attr_aspects = ["deps"],
@@ -153,6 +158,7 @@ def deps_enforcer_aspect_factory(pip_deps_index, suppression_tags = None, output
             _deps = attr.label(cfg = "exec", default = "//pydeps/private/enforcer:deps_cli", executable = True),
             _index = attr.label(default = pip_deps_index),
             _output_groups = attr.string_list(default = output_groups or []),
-            _suppression_tags = attr.string_list(default = suppression_tags),
+            _suppression_tags = attr.string_list(default = suppression_tags or ["no-deps-enforcer"]),
+            _ignored_names = attr.string_list(default = ignored_target_names or []),
         ),
     )
