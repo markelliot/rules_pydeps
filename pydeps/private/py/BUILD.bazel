@@ -1,14 +1,16 @@
+load("@python_versions//3.12:defs.bzl", py_312_binary = "py_binary")
 load("@rules_pydeps_pip//:requirements.bzl", "requirement")
-load("@rules_python//python:defs.bzl", "py_library")
 load("//pydeps/private/pytest:pytest.bzl", "pytest_test")
 
-py_library(
+# TODO: rules_python doesn't offer a Python 3.12 py_library, and we
+# need to pin the version to match rules_pydeps_pip's library version.
+py_312_binary(
     name = "py",
     srcs = glob(
         include = ["*.py"],
         exclude = ["test_*.py"],
     ),
-    precompile = "disabled",
+    main = "__init__.py",  # hack
     visibility = [
         "//pydeps/private:__subpackages__",
     ],
