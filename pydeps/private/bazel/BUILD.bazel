@@ -1,15 +1,13 @@
-load("@python_versions//3.12:defs.bzl", py_312_binary = "py_binary")
 load("@rules_pydeps_pip//:requirements.bzl", "requirement")
+load("@rules_python//python:py_library.bzl", "py_library")
 
-# TODO: rules_python doesn't offer a Python 3.12 py_library, and we
-# need to pin the version to match rules_pydeps_pip's library version.
-py_312_binary(
+py_library(
     name = "bazel",
     srcs = glob(
         include = ["*.py"],
         exclude = ["test_*.py"],
     ),
-    main = "__init__.py",  # hack
+    tags = ["manual"],
     visibility = [
         "//pydeps/private:__subpackages__",
     ],
