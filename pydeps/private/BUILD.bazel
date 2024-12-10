@@ -5,6 +5,7 @@ pip_compile(
     name = "generate_requirements_lock",
     requirements_in = "requirements.in",
     requirements_txt = "requirements.txt",
+    universal = True,
 )
 
 create_venv(

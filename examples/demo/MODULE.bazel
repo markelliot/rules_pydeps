@@ -20,11 +20,9 @@ local_path_override(
 # configuration
 PYTHON_VERSION = "3.12"
 
-PYTHON_VERSION_SNAKE = PYTHON_VERSION.replace(".", "_")
-
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
 python.toolchain(python_version = PYTHON_VERSION)
-use_repo(python, "python_" + PYTHON_VERSION_SNAKE, "python_versions")
+use_repo(python, "python_versions")
 
 pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
 pip.parse(

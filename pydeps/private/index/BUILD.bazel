@@ -10,9 +10,7 @@ py_312_binary(
         include = ["*.py"],
         exclude = ["test_*.py"],
     ),
-    visibility = [
-        "//pydeps/private:__subpackages__",
-    ],
+    visibility = ["//visibility:public"],
     deps = [
         "//pydeps/private/py",
         requirement("click"),
